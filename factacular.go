@@ -10,6 +10,7 @@ import (
 func main() {
     app := cli.NewApp()
     app.Name = "factacular"
+    app.Version = "0.1"
     app.Usage = "Get facts and informations from PuppetDB."
     app.Action = func(c *cli.Context) {
         println("PuppetDB")
