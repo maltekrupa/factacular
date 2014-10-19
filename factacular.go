@@ -56,6 +56,35 @@ func main() {
                 }
             },
         },
+        {
+            Name:      "node-facts",
+            ShortName: "nf",
+            Usage:     "List all available nodes",
+            Flags:     []cli.Flag {
+                cli.StringFlag{
+                    Name:  "node, n",
+                    Value: "",
+                    Usage: "Node to get the facts for.",
+                },
+            },
+            Action: func(c *cli.Context) {
+                if(c.String("node") == "") {
+                    fmt.Println("Please provide a node.")
+                    return
+                }
+                fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
+                client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+                resp, err := client.NodeFacts(c.String("node"))
+                if err != nil {
+                    fmt.Println(err)
+                }
+                fmt.Println("Node-facts: ")
+                for _, element := range resp {
+                    fmt.Printf("%v - %v\n", c.String("node"), element.Name)
+                    fmt.Printf("%v\n", element.Value)
+                }
+            },
+        },
     }
     app.Action = func(c *cli.Context) {
         fmt.Println("Please provide a command to do stuff. 'h' brings up the help.")
