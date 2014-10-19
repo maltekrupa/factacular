@@ -35,7 +35,24 @@ func main() {
                 }
                 fmt.Println("Facts: ")
                 for _, element := range resp {
-                    fmt.Println(element)
+                    fmt.Printf("%v\n", element)
+                }
+            },
+        },
+        {
+            Name:      "list-nodes",
+            ShortName: "ln",
+            Usage:     "List all available nodes",
+            Action: func(c *cli.Context) {
+                fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
+                client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+                resp, err := client.Nodes()
+                if err != nil {
+                    fmt.Println(err)
+                }
+                fmt.Println("Nodes: ")
+                for _, element := range resp {
+                    fmt.Printf("%v\n", element.Name)
                 }
             },
         },
