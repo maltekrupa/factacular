@@ -59,28 +59,21 @@ func main() {
         {
             Name:      "node-facts",
             ShortName: "nf",
-            Usage:     "List all available nodes",
-            Flags:     []cli.Flag {
-                cli.StringFlag{
-                    Name:  "node, n",
-                    Value: "",
-                    Usage: "Node to get the facts for.",
-                },
-            },
+            Usage:     "List all facts for a specific node.",
             Action: func(c *cli.Context) {
-                if(c.String("node") == "") {
-                    fmt.Println("Please provide a node.")
+                if(c.Args().First() == "") {
+                    fmt.Println("Please provide the FQDN of a node.")
                     return
                 }
                 fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
                 client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-                resp, err := client.NodeFacts(c.String("node"))
+                resp, err := client.NodeFacts(c.Args().First())
                 if err != nil {
                     fmt.Println(err)
                 }
                 fmt.Println("Node-facts: ")
                 for _, element := range resp {
-                    fmt.Printf("%v - %v\n", c.String("node"), element.Name)
+                    fmt.Printf("%v - %v\n", c.Args().First(), element.Name)
                     fmt.Printf("%v\n", element.Value)
                 }
             },
@@ -89,21 +82,14 @@ func main() {
             Name:      "fact",
             ShortName: "f",
             Usage:     "List fact for all nodes.",
-            Flags:     []cli.Flag {
-                cli.StringFlag{
-                    Name:  "fact, f",
-                    Value: "",
-                    Usage: "Fact to query at all nodes",
-                },
-            },
             Action: func(c *cli.Context) {
-                if(c.String("fact") == "") {
+                if(c.Args().First() == "") {
                     fmt.Println("Please provide a fact.")
                     return
                 }
                 fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
                 client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-                resp, err := client.FactPerNode(c.String("fact"))
+                resp, err := client.FactPerNode(c.Args().First())
                 if err != nil {
                     fmt.Println(err)
                 }
