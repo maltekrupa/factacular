@@ -68,7 +68,7 @@ func main() {
                 }
                 fmt.Println("Facts: ")
                 for _, element := range resp {
-                    fmt.Printf("%v\n", element)
+                    fmt.Println(element)
                 }
             },
         },
@@ -85,7 +85,7 @@ func main() {
                 }
                 fmt.Println("Nodes: ")
                 for _, element := range resp {
-                    fmt.Printf("%v\n", element.Name)
+                    fmt.Println(element.Name)
                 }
             },
         },
@@ -107,7 +107,7 @@ func main() {
                 fmt.Println("Node-facts: ")
                 for _, element := range resp {
                     fmt.Printf("%v - %v\n", c.Args().First(), element.Name)
-                    fmt.Printf("%v\n", element.Value)
+                    fmt.Println(element.Value)
                 }
             },
         },
