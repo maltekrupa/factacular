@@ -4,9 +4,42 @@ package main
 import (
     "fmt"
     "os"
+    "sort"
     "github.com/temal-/go-puppetdb"
     "github.com/codegangsta/cli"
 )
+
+type ValSorter struct {
+    Keys []string
+    Vals []int
+}
+
+func NewValSorter(m map[string]int) *ValSorter {
+    vs := &ValSorter{
+        Keys: make([]string, 0, len(m)),
+        Vals: make([]int, 0, len(m)),
+    }
+    for k, v := range m {
+        vs.Keys = append(vs.Keys, k)
+        vs.Vals = append(vs.Vals, v)
+    }
+    return vs
+}
+
+func (vs *ValSorter) Sort() {
+    sort.Sort(sort.Reverse(vs))
+}
+
+func (vs *ValSorter) Len() int {
+    return len(vs.Vals)
+}
+func (vs *ValSorter) Less(i, j int) bool {
+    return vs.Vals[i] < vs.Vals[j]
+}
+func (vs *ValSorter) Swap(i, j int) {
+    vs.Vals[i], vs.Vals[j] = vs.Vals[j], vs.Vals[i]
+    vs.Keys[i], vs.Keys[j] = vs.Keys[j], vs.Keys[i]
+}
 
 func main() {
     app := cli.NewApp()
@@ -82,6 +115,12 @@ func main() {
             Name:      "fact",
             ShortName: "f",
             Usage:     "List fact for all nodes.",
+            Flags:     []cli.Flag {
+                cli.BoolFlag{
+                    Name:  "stats",
+                    Usage: "Accumulate some stats.",
+                },
+            },
             Action: func(c *cli.Context) {
                 if(c.Args().First() == "") {
                     fmt.Println("Please provide a fact.")
@@ -93,9 +132,24 @@ func main() {
                 if err != nil {
                     fmt.Println(err)
                 }
-                fmt.Println("Fact per node: ")
-                for _, element := range resp {
-                    fmt.Printf("%v - %v - %v\n", element.CertName, element.Name, element.Value)
+                if(c.Bool("stats")) {
+                    fmt.Println("Node-facts")
+                    fmt.Printf("Nodes with fact %s: %d\n", c.Args().First(), len(resp))
+
+                    wordCounts := make(map[string]int)
+                    for _, element := range resp {
+                        wordCounts[element.Value]++
+                    }
+                    vs := NewValSorter(wordCounts)
+                    vs.Sort()
+                    for k, _ := range vs.Keys {
+                        fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
+                    }
+                } else {
+                    fmt.Println("Fact per node: ")
+                    for _, element := range resp {
+                        fmt.Printf("%v - %v - %v\n", element.CertName, element.Name, element.Value)
+                    }
                 }
             },
         },
