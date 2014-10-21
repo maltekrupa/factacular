@@ -154,8 +154,5 @@ func main() {
             },
         },
     }
-    app.Action = func(c *cli.Context) {
-        fmt.Println("Please provide a command to do stuff. 'h' brings up the help.")
-    }
     app.Run(os.Args)
 }
