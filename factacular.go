@@ -82,7 +82,6 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Facts: ")
 				for _, element := range resp {
 					fmt.Println(element)
 				}
@@ -99,7 +98,6 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Nodes: ")
 				for _, element := range resp {
 					fmt.Println(element.Name)
 				}
@@ -120,7 +118,6 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Node-facts: ")
 				for _, element := range resp {
 					fmt.Printf("%v - %v\n", c.Args().First(), element.Name)
 					fmt.Println(element.Value)
@@ -149,7 +146,6 @@ func main() {
 					fmt.Println(err)
 				}
 				if c.Bool("stats") {
-					fmt.Println("Node-facts")
 					fmt.Printf("Nodes with fact %s: %d\n", c.Args().First(), len(resp))
 
 					wordCounts := make(map[string]int)
@@ -162,7 +158,6 @@ func main() {
 						fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
 					}
 				} else {
-					fmt.Println("Fact per node: ")
 					for _, element := range resp {
 						fmt.Printf("%v - %v - %v\n", element.CertName, element.Name, element.Value)
 					}
