@@ -29,7 +29,7 @@ USAGE:
    factacular [global options] command [command options] [arguments...]
 
 VERSION:
-   0.3
+   0.3.1
 
 COMMANDS:
    list-facts, lf       List all available facts
