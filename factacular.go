@@ -114,7 +114,7 @@ func main() {
 					Usage: "Accumulate some stats over all nodes based on this fact.",
 				},
 				cli.BoolFlag{
-					Name:  "without-values",
+					Name:  "nodata",
 					Usage: "Outputs only the hostnames which have a value for this fact.",
 				},
 			},
@@ -141,7 +141,7 @@ func main() {
 					for k := range vs.Keys {
 						fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
 					}
-				} else if c.Bool("without-values") {
+				} else if c.Bool("nodata") {
 					for _, element := range resp {
 						fmt.Println(element.CertName)
 					}
