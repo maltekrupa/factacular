@@ -111,7 +111,11 @@ func main() {
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "stats",
-					Usage: "Accumulate some stats.",
+					Usage: "Accumulate some stats over all nodes based on this fact.",
+				},
+				cli.BoolFlag{
+					Name:  "without-values",
+					Usage: "Outputs only the hostnames which have a value for this fact.",
 				},
 			},
 			Action: func(c *cli.Context) {
@@ -136,6 +140,10 @@ func main() {
 					vs.Sort()
 					for k := range vs.Keys {
 						fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
+					}
+				} else if c.Bool("without-values") {
+					for _, element := range resp {
+						fmt.Println(element.CertName)
 					}
 				} else {
 					for _, element := range resp {
