@@ -74,13 +74,13 @@ func main() {
 		{
 			Name:      "list-facts",
 			ShortName: "lf",
-			Usage:     "List all available facts",
+			Usage:     "List all available facts.",
 			Action:    listFacts,
 		},
 		{
 			Name:      "list-nodes",
 			ShortName: "ln",
-			Usage:     "List all available nodes",
+			Usage:     "List all available nodes.",
 			Action:    listNodes,
 		},
 		{
@@ -107,7 +107,7 @@ func main() {
 		{
 			Name:      "fact",
 			ShortName: "f",
-			Usage:     "List fact for all nodes.",
+			Usage:     "List fact for all nodes (which have this fact).",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "stats",
