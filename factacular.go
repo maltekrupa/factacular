@@ -87,22 +87,7 @@ func main() {
 			Name:      "node-facts",
 			ShortName: "nf",
 			Usage:     "List all facts for a specific node.",
-			Action: func(c *cli.Context) {
-				if c.Args().First() == "" {
-					fmt.Println("Please provide the FQDN of a node.")
-					return
-				}
-				fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
-				client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-				resp, err := client.NodeFacts(c.Args().First())
-				if err != nil {
-					fmt.Println(err)
-				}
-				for _, element := range resp {
-					fmt.Printf("%v - %v\n", c.Args().First(), element.Name)
-					fmt.Println(element.Value)
-				}
-			},
+			Action:    nodeFacts,
 		},
 		{
 			Name:      "fact",
@@ -177,5 +162,22 @@ func listNodes(c *cli.Context) {
 	}
 	for _, element := range resp {
 		fmt.Println(element.Name)
+	}
+}
+
+func nodeFacts(c *cli.Context) {
+	if c.Args().First() == "" {
+		fmt.Println("Please provide the FQDN of a node.")
+		return
+	}
+	fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
+	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+	resp, err := client.NodeFacts(c.Args().First())
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, element := range resp {
+		fmt.Printf("%v - %v\n", c.Args().First(), element.Name)
+		fmt.Println(element.Value)
 	}
 }
