@@ -93,6 +93,7 @@ func main() {
 			Name:      "fact",
 			ShortName: "f",
 			Usage:     "List fact for all nodes (which have this fact).",
+			Action:    fact,
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "stats",
@@ -102,39 +103,6 @@ func main() {
 					Name:  "nodata",
 					Usage: "Outputs only the hostnames which have a value for this fact.",
 				},
-			},
-			Action: func(c *cli.Context) {
-				if c.Args().First() == "" {
-					fmt.Println("Please provide a fact.")
-					return
-				}
-				fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
-				client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-				resp, err := client.FactPerNode(c.Args().First())
-				if err != nil {
-					fmt.Println(err)
-				}
-				if c.Bool("stats") {
-					fmt.Printf("Nodes with fact %s: %d\n", c.Args().First(), len(resp))
-
-					wordCounts := make(map[string]int)
-					for _, element := range resp {
-						wordCounts[element.Value]++
-					}
-					vs := NewValSorter(wordCounts)
-					vs.Sort()
-					for k := range vs.Keys {
-						fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
-					}
-				} else if c.Bool("nodata") {
-					for _, element := range resp {
-						fmt.Println(element.CertName)
-					}
-				} else {
-					for _, element := range resp {
-						fmt.Printf("%v - %v - %v\n", element.CertName, element.Name, element.Value)
-					}
-				}
 			},
 		},
 	}
@@ -179,5 +147,39 @@ func nodeFacts(c *cli.Context) {
 	for _, element := range resp {
 		fmt.Printf("%v - %v\n", c.Args().First(), element.Name)
 		fmt.Println(element.Value)
+	}
+}
+
+func fact(c *cli.Context) {
+	if c.Args().First() == "" {
+		fmt.Println("Please provide a fact.")
+		return
+	}
+	fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
+	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+	resp, err := client.FactPerNode(c.Args().First())
+	if err != nil {
+		fmt.Println(err)
+	}
+	if c.Bool("stats") {
+		fmt.Printf("Nodes with fact %s: %d\n", c.Args().First(), len(resp))
+
+		wordCounts := make(map[string]int)
+		for _, element := range resp {
+			wordCounts[element.Value]++
+		}
+		vs := NewValSorter(wordCounts)
+		vs.Sort()
+		for k := range vs.Keys {
+			fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
+		}
+	} else if c.Bool("nodata") {
+		for _, element := range resp {
+			fmt.Println(element.CertName)
+		}
+	} else {
+		for _, element := range resp {
+			fmt.Printf("%v - %v - %v\n", element.CertName, element.Name, element.Value)
+		}
 	}
 }
