@@ -101,7 +101,11 @@ func main() {
 				},
 				cli.BoolFlag{
 					Name:  "nodata",
-					Usage: "Outputs only the hostnames which have a value for this fact.",
+					Usage: "Outputs only the nodes which have a value for this fact.",
+				},
+				cli.BoolFlag{
+					Name:  "nofact",
+					Usage: "Outputs only the nodes which have NO value for this fact.",
 				},
 			},
 		},
@@ -176,6 +180,29 @@ func fact(c *cli.Context) {
 	} else if c.Bool("nodata") {
 		for _, element := range resp {
 			fmt.Println(element.CertName)
+		}
+	} else if c.Bool("nofact") {
+		// Get a list of all nodes.
+		allNodes, _ := client.Nodes()
+		// If resp and allNodes have the same length: done.
+		if len(allNodes) == len(resp) {
+			fmt.Println("All nodes have this fact.")
+		} else {
+			// Put all nodes in a map (for easy deleting).
+			nodesWithoutFact := make(map[string]bool)
+			for _, element := range allNodes {
+				nodesWithoutFact[element.Name] = true
+			}
+			// Remove all nodes which provide a valid fact from the map.
+			for _, element := range resp {
+				if nodesWithoutFact[element.CertName] {
+					delete(nodesWithoutFact, element.CertName)
+				}
+			}
+			for name := range nodesWithoutFact {
+				fmt.Println(name)
+			}
+			fmt.Printf("Nodes without this fact: %d\n", len(nodesWithoutFact))
 		}
 	} else {
 		for _, element := range resp {
