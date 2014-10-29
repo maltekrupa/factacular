@@ -179,7 +179,7 @@ func fact(c *cli.Context) {
 		}
 	} else {
 		for _, element := range resp {
-			fmt.Printf("%v - %v - %v\n", element.CertName, element.Name, element.Value)
+			fmt.Printf("%v - %v\n", element.CertName, element.Value)
 		}
 	}
 }
