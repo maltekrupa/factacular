@@ -212,7 +212,7 @@ func fact(c *cli.Context) {
 			for name := range nodesWithoutFact {
 				fmt.Println(name)
 			}
-			fmt.Printf("Nodes without this fact: %d\n", len(nodesWithoutFact))
+			fmt.Printf("Amount of nodes without this fact: %d\n", len(nodesWithoutFact))
 		}
 	} else {
 		for _, element := range resp {
