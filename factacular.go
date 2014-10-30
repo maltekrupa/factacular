@@ -15,9 +15,11 @@ Examples:
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/temal-/go-puppetdb"
+	"log"
 	"os"
 	"sort"
 )
@@ -159,8 +161,16 @@ func fact(c *cli.Context) {
 		fmt.Println("Please provide a fact.")
 		return
 	}
+
 	fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
 	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+
+	// Check if fact is a valid fact.
+	err := checkFactAvailability(c, c.Args().First())
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	resp, err := client.FactPerNode(c.Args().First())
 	if err != nil {
 		fmt.Println(err)
@@ -209,4 +219,15 @@ func fact(c *cli.Context) {
 			fmt.Printf("%v - %v\n", element.CertName, element.Value)
 		}
 	}
+}
+
+func checkFactAvailability(c *cli.Context, factName string) (err error) {
+	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+	facts, err := client.FactNames()
+	for _, fact := range facts {
+		if fact == factName {
+			return
+		}
+	}
+	return errors.New("\"" + factName + "\" is no valid fact.")
 }
