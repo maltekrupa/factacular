@@ -1,3 +1,6 @@
+/*
+	Helper functions and structs for better code handling.
+*/
 package main
 
 import (

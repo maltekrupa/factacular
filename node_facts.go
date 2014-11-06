@@ -1,3 +1,6 @@
+/*
+	Get all facts for a specific node.
+*/
 package main
 
 import (

@@ -1,3 +1,6 @@
+/*
+	Get a list of all facts.
+*/
 package main
 
 import (
