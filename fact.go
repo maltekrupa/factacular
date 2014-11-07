@@ -1,6 +1,7 @@
 /*
 	Functions for working with facts endpoint.
 */
+
 package main
 
 import (

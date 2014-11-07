@@ -1,6 +1,7 @@
 /*
 	Get a list of all nodes.
 */
+
 package main
 
 import (
