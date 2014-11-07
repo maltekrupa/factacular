@@ -1,12 +1,14 @@
 /*
 	Helper functions and structs for better code handling.
 */
+
 package main
 
 import (
 	"errors"
 	"github.com/codegangsta/cli"
 	"github.com/temal-/go-puppetdb"
+	"log"
 	"sort"
 )
 
@@ -54,4 +56,13 @@ func checkFactAvailability(c *cli.Context, factName string) (err error) {
 		}
 	}
 	return errors.New("\"" + factName + "\" is no valid fact.")
+}
+
+func checkPuppetAvailability(c *cli.Context) error {
+	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+	_, err := client.PuppetdbVersion()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return err
 }
