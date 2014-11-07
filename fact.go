@@ -42,7 +42,7 @@ func fact(c *cli.Context) {
 		for k := range vs.Keys {
 			fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
 		}
-	} else if c.Bool("nodata") {
+	} else if c.Bool("without-data") {
 		for _, element := range resp {
 			fmt.Println(element.CertName)
 		}

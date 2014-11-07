@@ -63,7 +63,7 @@ func main() {
 					Usage: "Accumulate some stats over all nodes based on this fact.",
 				},
 				cli.BoolFlag{
-					Name:  "nodata",
+					Name:  "without-data",
 					Usage: "Outputs only the nodes which have a value for this fact.",
 				},
 				cli.BoolFlag{
