@@ -135,3 +135,43 @@ func ExampleListFacts() {
 	}
 	app.Run([]string{"factacular", "list-facts"})
 }
+
+func ExampleListNodes() {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v3/nodes",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, `[{ "name" : "fqdn1.example.com",
+                             "deactivated" : null,
+                             "catalog_timestamp" : "2014-11-07T23:32:09.998Z",
+                             "facts_timestamp" : "2014-11-07T23:32:04.723Z",
+                             "report_timestamp" : "2014-11-07T23:32:10.372Z"
+                           }, {
+                             "name" : "fqdn2.example.com",
+                             "deactivated" : null,
+                             "catalog_timestamp" : "2014-11-08T08:09:12.544Z",
+                             "facts_timestamp" : "2014-11-08T08:09:06.224Z",
+                             "report_timestamp" : "2014-11-08T08:09:16.779Z"
+                           }, {
+                             "name" : "fqdn1.example.org",
+                             "deactivated" : null,
+                             "catalog_timestamp" : "2014-11-08T06:07:10.296Z",
+                             "facts_timestamp" : "2014-11-08T06:07:04.789Z",
+                             "report_timestamp" : "2014-11-08T06:07:10.627Z"
+                           }]`)
+		})
+	mux.HandleFunc("/v3/version",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, `{"version":"2.2.1"}`)
+		})
+
+	app.Action = func(c *cli.Context) {
+		listNodes(c)
+		// Output:
+		// fqdn1.example.com
+		// fqdn2.example.com
+		// fqdn1.example.org
+	}
+	app.Run([]string{"factacular", "list-nodes"})
+}
