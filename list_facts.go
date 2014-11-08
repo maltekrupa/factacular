@@ -14,7 +14,9 @@ func listFacts(c *cli.Context) {
 	// Check if puppetdb is available
 	checkPuppetAvailability(c)
 
-	fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
+	if c.GlobalBool("debug") {
+		fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
+	}
 	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
 	resp, err := client.FactNames()
 	if err != nil {

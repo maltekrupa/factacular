@@ -32,6 +32,10 @@ func main() {
 			Usage:  "PuppetDB host.",
 			EnvVar: "PUPPETDB_HOST",
 		},
+		cli.BoolFlag{
+			Name:  "debug, d",
+			Usage: "Enable debug output.",
+		},
 	}
 	app.Commands = []cli.Command{
 		{
