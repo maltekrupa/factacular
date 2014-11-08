@@ -26,7 +26,7 @@ func fact(c *cli.Context) {
 	// Check if fact is a valid fact.
 	err := checkFactAvailability(c, c.Args().First())
 	if err != nil {
-		log.Fatal("foo", err)
+		log.Fatal(err)
 	}
 
 	resp, err := client.FactPerNode(c.Args().First())
