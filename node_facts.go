@@ -15,6 +15,10 @@ func nodeFacts(c *cli.Context) {
 		fmt.Println("Please provide the FQDN of a node.")
 		return
 	}
+
+	// Check if puppetdb is available
+	checkPuppetAvailability(c)
+
 	fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
 	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
 	resp, err := client.NodeFacts(c.Args().First())

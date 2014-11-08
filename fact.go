@@ -17,13 +17,16 @@ func fact(c *cli.Context) {
 		return
 	}
 
+	// Check if puppetdb is available
+	checkPuppetAvailability(c)
+
 	fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
 	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
 
 	// Check if fact is a valid fact.
 	err := checkFactAvailability(c, c.Args().First())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("foo", err)
 	}
 
 	resp, err := client.FactPerNode(c.Args().First())

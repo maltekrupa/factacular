@@ -8,7 +8,7 @@ import (
 	"errors"
 	"github.com/codegangsta/cli"
 	"github.com/temal-/go-puppetdb"
-	"log"
+	"os"
 	"sort"
 )
 
@@ -58,11 +58,10 @@ func checkFactAvailability(c *cli.Context, factName string) (err error) {
 	return errors.New("\"" + factName + "\" is no valid fact.")
 }
 
-func checkPuppetAvailability(c *cli.Context) error {
+func checkPuppetAvailability(c *cli.Context) {
 	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
 	_, err := client.PuppetdbVersion()
 	if err != nil {
-		log.Fatal(err)
+		os.Exit(1)
 	}
-	return err
 }
