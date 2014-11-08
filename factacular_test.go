@@ -20,6 +20,11 @@ func setup() {
 
 	serverURL, _ := url.Parse(server.URL)
 
+	mux.HandleFunc("/v3/version",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, `{"version":"2.2.1"}`)
+		})
+
 	app = cli.NewApp()
 	app.Name = "factacular"
 	app.Flags = []cli.Flag{
@@ -97,10 +102,6 @@ func ExampleNodeFacts() {
                              "certname" : "foobar"
 						 	}]`)
 		})
-	mux.HandleFunc("/v3/version",
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, `{"version":"2.2.1"}`)
-		})
 
 	app.Action = func(c *cli.Context) {
 		nodeFacts(c)
@@ -120,10 +121,6 @@ func ExampleListFacts() {
 	mux.HandleFunc("/v3/fact-names",
 		func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprint(w, `[ "architecture", "os", "puppetversion" ]`)
-		})
-	mux.HandleFunc("/v3/version",
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, `{"version":"2.2.1"}`)
 		})
 
 	app.Action = func(c *cli.Context) {
@@ -160,10 +157,6 @@ func ExampleListNodes() {
                              "facts_timestamp" : "2014-11-08T06:07:04.789Z",
                              "report_timestamp" : "2014-11-08T06:07:10.627Z"
                            }]`)
-		})
-	mux.HandleFunc("/v3/version",
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, `{"version":"2.2.1"}`)
 		})
 
 	app.Action = func(c *cli.Context) {
