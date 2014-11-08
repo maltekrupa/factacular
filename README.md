@@ -2,6 +2,10 @@
 
 Factacular is a Command Line Interface (CLI) for convinient querying of the PuppetDB.
 
+## Repository status
+
+Travis-ci.org: [![Build Status](https://travis-ci.org/temal-/factacular.svg?branch=master)](https://travis-ci.org/temal-/factacular)
+
 ## Install
 
 ```
