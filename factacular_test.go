@@ -29,13 +29,49 @@ func setup() {
 			Usage:  "PuppetDB host.",
 			EnvVar: "PUPPETDB_HOST",
 		},
+		cli.BoolFlag{
+			Name:  "debug, d",
+			Usage: "Enable debug output.",
+		},
 	}
 	app.Commands = []cli.Command{
+		{
+			Name:      "list-facts",
+			ShortName: "lf",
+			Usage:     "List all available facts.",
+			Action:    listFacts,
+		},
+		{
+			Name:      "list-nodes",
+			ShortName: "ln",
+			Usage:     "List all available nodes.",
+			Action:    listNodes,
+		},
 		{
 			Name:      "node-facts",
 			ShortName: "nf",
 			Usage:     "List all facts for a specific node.",
 			Action:    nodeFacts,
+		},
+		{
+			Name:      "fact",
+			ShortName: "f",
+			Usage:     "List fact for all nodes (which have this fact).",
+			Action:    fact,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "stats",
+					Usage: "Accumulate some stats over all nodes based on this fact.",
+				},
+				cli.BoolFlag{
+					Name:  "without-data",
+					Usage: "Outputs only the nodes which have a value for this fact.",
+				},
+				cli.BoolFlag{
+					Name:  "nofact",
+					Usage: "Outputs only the nodes which have NO value for this fact.",
+				},
+			},
 		},
 	}
 }
@@ -75,4 +111,27 @@ func ExampleNodeFacts() {
 		// 3.7.1
 	}
 	app.Run([]string{"factacular", "node-facts", "foobar"})
+}
+
+func ExampleListFacts() {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v3/fact-names",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, `[ "architecture", "os", "puppetversion" ]`)
+		})
+	mux.HandleFunc("/v3/version",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, `{"version":"2.2.1"}`)
+		})
+
+	app.Action = func(c *cli.Context) {
+		listFacts(c)
+		// Output:
+		// architecture
+		// os
+		// puppetversion
+	}
+	app.Run([]string{"factacular", "list-facts"})
 }
