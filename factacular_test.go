@@ -144,19 +144,19 @@ func ExampleListNodes() {
 								"catalog_timestamp" : "2014-11-07T23:32:09.998Z",
 								"facts_timestamp" : "2014-11-07T23:32:04.723Z",
 								"report_timestamp" : "2014-11-07T23:32:10.372Z"
-                           }, {
+							}, {
 								"name" : "fqdn2.example.com",
 								"deactivated" : null,
 								"catalog_timestamp" : "2014-11-08T08:09:12.544Z",
 								"facts_timestamp" : "2014-11-08T08:09:06.224Z",
 								"report_timestamp" : "2014-11-08T08:09:16.779Z"
-                           }, {
+							}, {
 								"name" : "fqdn1.example.org",
 								"deactivated" : null,
 								"catalog_timestamp" : "2014-11-08T06:07:10.296Z",
 								"facts_timestamp" : "2014-11-08T06:07:04.789Z",
 								"report_timestamp" : "2014-11-08T06:07:10.627Z"
-                           }]`)
+							}]`)
 		})
 
 	app.Action = func(c *cli.Context) {
