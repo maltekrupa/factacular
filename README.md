@@ -33,19 +33,19 @@ USAGE:
    factacular [global options] command [command options] [arguments...]
 
 VERSION:
-   0.3.1
+   0.3.2
 
 COMMANDS:
-   list-facts, lf       List all available facts
-   list-nodes, ln       List all available nodes
-   node-facts, nf       List all facts for a specific node.
-   fact, f              List fact for all nodes.
-   help, h              Shows a list of commands or help for one command
+   list-facts, lf   List all available facts.
+   list-nodes, ln   List all available nodes.
+   node-facts, nf   List all facts for a specific node.
+   fact, f      List fact for all nodes (which have this fact).
+   help, h      Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --puppetdb, -p 'http://localhost:8080'       PuppetDB host. [$PUPPETDB_HOST]
-   --help, -h                                   show help
-   --version, -v                                print the version
+   --puppetdb, -p 'http://localhost:8080'   PuppetDB host. [$PUPPETDB_HOST]
+   --help, -h                   show help
+   --version, -v
 ```
 
 ## Examples
