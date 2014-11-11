@@ -23,7 +23,6 @@ func fact(c *cli.Context) {
 
 	// Check if puppetdb is available
 	checkPuppetAvailability(c)
-
 	if c.GlobalBool("debug") {
 		fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
 	}
@@ -39,15 +38,17 @@ func fact(c *cli.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	if c.Bool("stats") {
+
+	switch {
+	case c.Bool("stats"):
 		printStats(c.Args().First())
-	} else if c.Bool("without-data") {
+	case c.Bool("without-data"):
 		printWithoutData()
-	} else if c.Bool("nofact") {
+	case c.Bool("nofact"):
 		// Get a list of all nodes.
 		allNodes, _ := client.Nodes()
 		printNoFact(c.Args().First(), allNodes)
-	} else {
+	default:
 		for _, element := range resp {
 			fmt.Printf("%v - %v\n", element.CertName, element.Value)
 		}
