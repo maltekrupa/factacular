@@ -11,6 +11,10 @@ import (
 	"log"
 )
 
+var (
+	resp []puppetdb.FactJson
+)
+
 func fact(c *cli.Context) {
 	if c.Args().First() == "" {
 		fmt.Println("Please provide a fact.")
@@ -31,52 +35,64 @@ func fact(c *cli.Context) {
 		log.Fatal(err)
 	}
 
-	resp, err := client.FactPerNode(c.Args().First())
+	resp, err = client.FactPerNode(c.Args().First())
 	if err != nil {
 		fmt.Println(err)
 	}
 	if c.Bool("stats") {
-		fmt.Printf("Nodes with fact %s: %d\n", c.Args().First(), len(resp))
-
-		wordCounts := make(map[string]int)
-		for _, element := range resp {
-			wordCounts[element.Value]++
-		}
-		vs := NewValSorter(wordCounts)
-		vs.Sort()
-		for k := range vs.Keys {
-			fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
-		}
+		printStats(c.Args().First())
 	} else if c.Bool("without-data") {
-		for _, element := range resp {
-			fmt.Println(element.CertName)
-		}
+		printWithoutData()
 	} else if c.Bool("nofact") {
 		// Get a list of all nodes.
 		allNodes, _ := client.Nodes()
-		// If resp and allNodes have the same length: done.
-		if len(allNodes) == len(resp) {
-			fmt.Println("All nodes have this fact.")
-		} else {
-			// Put all nodes in a map (for easy deleting).
-			nodesWithoutFact := make(map[string]bool)
-			for _, element := range allNodes {
-				nodesWithoutFact[element.Name] = true
-			}
-			// Remove all nodes which provide a valid fact from the map.
-			for _, element := range resp {
-				if nodesWithoutFact[element.CertName] {
-					delete(nodesWithoutFact, element.CertName)
-				}
-			}
-			for name := range nodesWithoutFact {
-				fmt.Println(name)
-			}
-			fmt.Printf("Amount of nodes without this fact: %d\n", len(nodesWithoutFact))
-		}
+		printNoFact(c.Args().First(), allNodes)
 	} else {
 		for _, element := range resp {
 			fmt.Printf("%v - %v\n", element.CertName, element.Value)
 		}
+	}
+}
+
+func printStats(factName string) {
+	fmt.Printf("Nodes with fact %s: %d\n", factName, len(resp))
+
+	wordCounts := make(map[string]int)
+	for _, element := range resp {
+		wordCounts[element.Value]++
+	}
+	vs := NewValSorter(wordCounts)
+	vs.Sort()
+	for k := range vs.Keys {
+		fmt.Printf("%s (%d)\n", vs.Keys[k], vs.Vals[k])
+	}
+}
+
+func printWithoutData() {
+	for _, element := range resp {
+		fmt.Println(element.CertName)
+	}
+}
+
+func printNoFact(factName string, allNodes []puppetdb.NodeJson) {
+	// If resp and allNodes have the same length: done.
+	if len(allNodes) == len(resp) {
+		fmt.Println("All nodes have this fact.")
+	} else {
+		// Put all nodes in a map (for easy deleting).
+		nodesWithoutFact := make(map[string]bool)
+		for _, element := range allNodes {
+			nodesWithoutFact[element.Name] = true
+		}
+		// Remove all nodes which provide a valid fact from the map.
+		for _, element := range resp {
+			if nodesWithoutFact[element.CertName] {
+				delete(nodesWithoutFact, element.CertName)
+			}
+		}
+		for name := range nodesWithoutFact {
+			fmt.Println(name)
+		}
+		fmt.Printf("Amount of nodes without this fact: %d\n", len(nodesWithoutFact))
 	}
 }
