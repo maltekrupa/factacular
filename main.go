@@ -76,6 +76,18 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:      "facts",
+			ShortName: "fs",
+			Usage:     "Accumulate multiple facts for all nodes.",
+			Action:    facts,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "nodes",
+					Usage: "Show facts only for the provided nodes.",
+				},
+			},
+		},
 	}
 	app.Run(os.Args)
 }
