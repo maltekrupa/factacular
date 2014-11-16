@@ -35,7 +35,6 @@ func facts(c *cli.Context) {
 	for {
 		select {
 		case s := <-nodeChan:
-			fmt.Println("Received fact:", s[0].Name)
 			addToOutput(output, s)
 		case <-time.After(1 * time.Second):
 			if debug {
