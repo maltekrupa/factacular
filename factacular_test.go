@@ -111,7 +111,7 @@ func ExampleNodeFacts() {
 		// foobar - puppetversion
 		// 3.7.1
 	}
-	app.Run([]string{"factacular", "node-facts", "foobar"})
+	app.Run([]string{"factacular", "--debug", "node-facts", "foobar"})
 }
 
 func ExampleListFacts() {

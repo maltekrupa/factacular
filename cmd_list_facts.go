@@ -7,18 +7,15 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
-	"github.com/temal-/go-puppetdb"
 )
 
 func listFacts(c *cli.Context) {
-	// Check if puppetdb is available
-	checkPuppetAvailability(c)
+	// Set debug level.
+	setDebug(c.GlobalBool("debug"))
+	// Start PuppetDB connector.
+	startPdbClient(c.GlobalString("puppetdb"))
 
-	if c.GlobalBool("debug") {
-		fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
-	}
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-	resp, err := client.FactNames()
+	resp, err := pdb_client.FactNames()
 	if err != nil {
 		fmt.Println(err)
 	}

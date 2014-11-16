@@ -6,11 +6,48 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/temal-/go-puppetdb"
 	"os"
 	"sort"
 )
+
+var (
+	pdb_client *puppetdb.Client
+	debug      bool
+)
+
+func startPdbClient(nodeName string) {
+	fmt.Println(nodeName)
+	pdb_client = puppetdb.NewClient(nodeName)
+	fmt.Printf("%+v", pdb_client)
+	checkPuppetAvailability()
+}
+
+func checkFactAvailability(c *cli.Context, factName string) (err error) {
+	facts, err := pdb_client.FactNames()
+	for _, fact := range facts {
+		if fact == factName {
+			return
+		}
+	}
+	return errors.New("\"" + factName + "\" is no valid fact.")
+}
+
+func checkPuppetAvailability() {
+	pdb_version, err := pdb_client.PuppetdbVersion()
+	if err != nil {
+		os.Exit(1)
+	}
+	if debug {
+		fmt.Printf("Using PuppetDB (%s) at: %s", pdb_version, pdb_client.BaseURL)
+	}
+}
+
+func setDebug(state bool) {
+	debug = state
+}
 
 // ValSorter is a helper struct to make the sort of PuppetDB data more easy.
 type ValSorter struct {
@@ -45,23 +82,4 @@ func (vs *ValSorter) Less(i, j int) bool {
 func (vs *ValSorter) Swap(i, j int) {
 	vs.Vals[i], vs.Vals[j] = vs.Vals[j], vs.Vals[i]
 	vs.Keys[i], vs.Keys[j] = vs.Keys[j], vs.Keys[i]
-}
-
-func checkFactAvailability(c *cli.Context, factName string) (err error) {
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-	facts, err := client.FactNames()
-	for _, fact := range facts {
-		if fact == factName {
-			return
-		}
-	}
-	return errors.New("\"" + factName + "\" is no valid fact.")
-}
-
-func checkPuppetAvailability(c *cli.Context) {
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-	_, err := client.PuppetdbVersion()
-	if err != nil {
-		os.Exit(1)
-	}
 }

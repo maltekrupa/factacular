@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
-	"github.com/temal-/go-puppetdb"
 )
 
 func nodeFacts(c *cli.Context) {
@@ -16,14 +15,14 @@ func nodeFacts(c *cli.Context) {
 		return
 	}
 
-	// Check if puppetdb is available
-	checkPuppetAvailability(c)
+	// Set debug level.
+	setDebug(c.GlobalBool("debug"))
+	// Start PuppetDB connector.
+	fmt.Println("nodefacts: ")
+	fmt.Println("nodefacts: ", c.GlobalString("puppetdb"))
+	startPdbClient(c.GlobalString("puppetdb"))
 
-	if c.GlobalBool("debug") {
-		fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
-	}
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-	resp, err := client.NodeFacts(c.Args().First())
+	resp, err := pdb_client.NodeFacts(c.Args().First())
 	if err != nil {
 		fmt.Println(err)
 	}

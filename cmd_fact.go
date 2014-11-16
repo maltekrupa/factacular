@@ -21,12 +21,10 @@ func fact(c *cli.Context) {
 		return
 	}
 
-	// Check if puppetdb is available
-	checkPuppetAvailability(c)
-	if c.GlobalBool("debug") {
-		fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
-	}
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+	// Set debug level.
+	setDebug(c.GlobalBool("debug"))
+	// Start PuppetDB connector.
+	startPdbClient(c.GlobalString("puppetdb"))
 
 	// Check if fact is a valid fact.
 	err := checkFactAvailability(c, c.Args().First())
@@ -34,7 +32,7 @@ func fact(c *cli.Context) {
 		log.Fatal(err)
 	}
 
-	resp, err = client.FactPerNode(c.Args().First())
+	resp, err = pdb_client.FactPerNode(c.Args().First())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,7 +44,7 @@ func fact(c *cli.Context) {
 		printWithoutData()
 	case c.Bool("nofact"):
 		// Get a list of all nodes.
-		allNodes, _ := client.Nodes()
+		allNodes, _ := pdb_client.Nodes()
 		printNoFact(c.Args().First(), allNodes)
 	default:
 		for _, element := range resp {
