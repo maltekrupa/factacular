@@ -7,9 +7,16 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
+	"github.com/temal-/go-puppetdb"
 	"log"
 	"strings"
+	"time"
 )
+
+type singleFact struct {
+	name  string
+	value string
+}
 
 func facts(c *cli.Context) {
 	if c.Args().First() == "" {
@@ -19,40 +26,54 @@ func facts(c *cli.Context) {
 	// Initialize helpers
 	factacular_init(c)
 
+	// 'Parse' input
 	facts := strings.Split(c.Args().First(), ",")
-	if debug {
-		fmt.Printf("Gettings values ")
-	}
-
+	// Data
+	output := make(map[string][]singleFact)
 	// Get all facts for all nodes.
-	counter := make(chan int)
-	for _, value := range facts {
-		// TODO: Put this in a function.
-		// https://talks.golang.org/2012/concurrency.slide#39
-		//go getNodeFacts(value, )
-	}
-	rets := 0
+	nodeChan := getSingleFact(facts)
 	for {
-		rets += <-counter
-		if rets == len(facts) {
-			break
+		select {
+		case s := <-nodeChan:
+			fmt.Println("Received fact:", s[0].Name)
+			addToOutput(output, s)
+		case <-time.After(1 * time.Second):
+			if debug {
+				fmt.Println("Timeout!")
+			}
+			printOutput(output)
+			return
 		}
 	}
-	if debug {
-		fmt.Println(" done.")
-	}
-
-	// Shake the data till it's done.
 
 }
 
-//func getNodeFacts(factName string) puppetdb.NodeJson {
-//	_, err := pdb_client.FactPerNode(value)
-//	if debug {
-//		fmt.Printf(".")
-//	}
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	counter <- 1
-//}
+func addToOutput(result map[string][]singleFact, factList []puppetdb.FactJson) {
+	for _, value := range factList {
+		result[value.CertName] = append(result[value.CertName], singleFact{value.Name, value.Value})
+	}
+}
+
+func printOutput(output map[string][]singleFact) {
+	for key, val := range output {
+		fmt.Printf("%s | ", key)
+		for _, v := range val {
+			fmt.Printf("%s | ", v.value)
+		}
+		fmt.Printf("\n")
+	}
+}
+
+func getSingleFact(factName []string) <-chan []puppetdb.FactJson {
+	c := make(chan []puppetdb.FactJson)
+	for _, value := range factName {
+		go func(value string) {
+			allFacts, err := pdb_client.FactPerNode(value)
+			if err != nil {
+				log.Fatal(err)
+			}
+			c <- allFacts
+		}(value)
+	}
+	return c
+}
