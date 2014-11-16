@@ -26,8 +26,14 @@ func facts(c *cli.Context) {
 	// Initialize helpers.
 	factacular_init(c)
 
-	// 'Parse' input.
+	// 'Parse' input and check availability.
 	facts := strings.Split(c.Args().First(), ",")
+	factChan := make(chan error)
+	for _, fact := range facts {
+		go func(fact string) {
+			factChan <- checkFactAvailability(fact)
+		}(fact)
+	}
 
 	output := make(map[string][]singleFact)
 	// Get all facts for all nodes.
@@ -36,6 +42,10 @@ func facts(c *cli.Context) {
 		select {
 		case s := <-nodeChan:
 			addToOutput(output, s)
+		case e := <-factChan:
+			if e != nil {
+				log.Fatal(e)
+			}
 		case <-time.After(1 * time.Second):
 			if debug {
 				fmt.Println("Timeout!")

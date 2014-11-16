@@ -34,7 +34,7 @@ func startPdbClient(nodeName string) {
 	checkPuppetAvailability()
 }
 
-func checkFactAvailability(c *cli.Context, factName string) (err error) {
+func checkFactAvailability(factName string) (err error) {
 	facts, err := pdb_client.FactNames()
 	for _, fact := range facts {
 		if fact == factName {

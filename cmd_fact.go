@@ -25,7 +25,7 @@ func fact(c *cli.Context) {
 	factacular_init(c)
 
 	// Check if fact is a valid fact.
-	err := checkFactAvailability(c, c.Args().First())
+	err := checkFactAvailability(c.Args().First())
 	if err != nil {
 		log.Fatal(err)
 	}
