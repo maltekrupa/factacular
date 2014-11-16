@@ -10,10 +10,8 @@ import (
 )
 
 func listFacts(c *cli.Context) {
-	// Set debug level.
-	setDebug(c.GlobalBool("debug"))
-	// Start PuppetDB connector.
-	startPdbClient(c.GlobalString("puppetdb"))
+	// Initialize helpers
+	factacular_init(c)
 
 	resp, err := pdb_client.FactNames()
 	if err != nil {

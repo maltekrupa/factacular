@@ -16,13 +16,11 @@ func facts(c *cli.Context) {
 		log.Fatal("Please provide at least one fact.")
 	}
 
-	// Set debug level.
-	setDebug(c.GlobalBool("debug"))
-	// Start PuppetDB connector.
-	startPdbClient(c.GlobalString("puppetdb"))
+	// Initialize helpers
+	factacular_init(c)
 
 	facts := strings.Split(c.Args().First(), ",")
-	if c.GlobalBool("debug") {
+	if debug {
 		fmt.Printf("Gettings values ")
 	}
 
@@ -31,8 +29,7 @@ func facts(c *cli.Context) {
 	for _, value := range facts {
 		// TODO: Put this in a function.
 		// https://talks.golang.org/2012/concurrency.slide#39
-		//go getNodeFacts(value)
-		println(value)
+		//go getNodeFacts(value, )
 	}
 	rets := 0
 	for {
@@ -41,7 +38,7 @@ func facts(c *cli.Context) {
 			break
 		}
 	}
-	if c.GlobalBool("debug") {
+	if debug {
 		fmt.Println(" done.")
 	}
 

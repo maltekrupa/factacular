@@ -27,9 +27,8 @@ func main() {
 	app.Usage = "Get facts and informations from PuppetDB."
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name: "puppetdb, p",
-			//Value:  "http://localhost:8080",
-			Value:  "080",
+			Name:   "puppetdb, p",
+			Value:  "http://localhost:8080",
 			Usage:  "PuppetDB host.",
 			EnvVar: "PUPPETDB_HOST",
 		},
