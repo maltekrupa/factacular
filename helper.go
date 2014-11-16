@@ -18,10 +18,19 @@ var (
 	debug      bool
 )
 
+func factacular_init(c *cli.Context) {
+	// Set debug level.
+	setDebug(c.GlobalBool("debug"))
+	// Start PuppetDB connector.
+	startPdbClient(c.GlobalString("puppetdb"))
+}
+
+func setDebug(state bool) {
+	debug = state
+}
+
 func startPdbClient(nodeName string) {
-	fmt.Println(nodeName)
 	pdb_client = puppetdb.NewClient(nodeName)
-	fmt.Printf("%+v", pdb_client)
 	checkPuppetAvailability()
 }
 
@@ -43,10 +52,6 @@ func checkPuppetAvailability() {
 	if debug {
 		fmt.Printf("Using PuppetDB (%s) at: %s", pdb_version, pdb_client.BaseURL)
 	}
-}
-
-func setDebug(state bool) {
-	debug = state
 }
 
 // ValSorter is a helper struct to make the sort of PuppetDB data more easy.

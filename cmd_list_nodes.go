@@ -10,10 +10,8 @@ import (
 )
 
 func listNodes(c *cli.Context) {
-	// Set debug level.
-	setDebug(c.GlobalBool("debug"))
-	// Start PuppetDB connector.
-	startPdbClient(c.GlobalString("puppetdb"))
+	// Initialize helpers
+	factacular_init(c)
 
 	resp, err := pdb_client.Nodes()
 	if err != nil {

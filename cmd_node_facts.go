@@ -15,12 +15,8 @@ func nodeFacts(c *cli.Context) {
 		return
 	}
 
-	// Set debug level.
-	setDebug(c.GlobalBool("debug"))
-	// Start PuppetDB connector.
-	fmt.Println("nodefacts: ")
-	fmt.Println("nodefacts: ", c.GlobalString("puppetdb"))
-	startPdbClient(c.GlobalString("puppetdb"))
+	// Initialize helpers.
+	factacular_init(c)
 
 	resp, err := pdb_client.NodeFacts(c.Args().First())
 	if err != nil {

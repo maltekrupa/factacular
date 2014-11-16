@@ -21,10 +21,8 @@ func fact(c *cli.Context) {
 		return
 	}
 
-	// Set debug level.
-	setDebug(c.GlobalBool("debug"))
-	// Start PuppetDB connector.
-	startPdbClient(c.GlobalString("puppetdb"))
+	// Initialize helpers
+	factacular_init(c)
 
 	// Check if fact is a valid fact.
 	err := checkFactAvailability(c, c.Args().First())
