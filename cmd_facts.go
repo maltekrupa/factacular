@@ -29,11 +29,15 @@ func facts(c *cli.Context) {
 	// 'Parse' input and check availability.
 	facts := strings.Split(c.Args().First(), ",")
 	factChan := make(chan error)
+	refCountChan := make(chan int)
+	refCount := 0
 	for _, fact := range facts {
 		go func(fact string) {
 			factChan <- checkFactAvailability(fact)
+			refCountChan <- 1
 		}(fact)
 	}
+
 L:
 	for {
 		select {
@@ -41,8 +45,11 @@ L:
 			if e != nil {
 				log.Fatal(e)
 			}
-		case <-time.After(5 * time.Millisecond):
-			break L
+		case r := <-refCountChan:
+			refCount += r
+			if refCount == len(facts) {
+				break L
+			}
 		}
 	}
 
