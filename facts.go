@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
-	"github.com/temal-/go-puppetdb"
 	"log"
 	"strings"
 )
@@ -16,11 +15,11 @@ func facts(c *cli.Context) {
 	if c.Args().First() == "" {
 		log.Fatal("Please provide at least one fact.")
 	}
-	if c.GlobalBool("debug") {
-		fmt.Println("PuppetDB host: " + c.GlobalString("puppetdb"))
-	}
-	checkPuppetAvailability(c)
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
+
+	// Set debug level.
+	setDebug(c.GlobalBool("debug"))
+	// Start PuppetDB connector.
+	startPdbClient(c.GlobalString("puppetdb"))
 
 	facts := strings.Split(c.Args().First(), ",")
 	if c.GlobalBool("debug") {
@@ -32,7 +31,8 @@ func facts(c *cli.Context) {
 	for _, value := range facts {
 		// TODO: Put this in a function.
 		// https://talks.golang.org/2012/concurrency.slide#39
-		go getNodeFacts(value)
+		//go getNodeFacts(value)
+		println(value)
 	}
 	rets := 0
 	for {
@@ -49,15 +49,13 @@ func facts(c *cli.Context) {
 
 }
 
-func getNodeFacts(factName string) puppetdb.NodeJson {
-	client := puppetdb.NewClient(c.GlobalString("puppetdb"))
-	defer client()
-	_, err := client.FactPerNode(value)
-	if c.GlobalBool("debug") {
-		fmt.Printf(".")
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	counter <- 1
-}
+//func getNodeFacts(factName string) puppetdb.NodeJson {
+//	_, err := pdb_client.FactPerNode(value)
+//	if debug {
+//		fmt.Printf(".")
+//	}
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	counter <- 1
+//}
