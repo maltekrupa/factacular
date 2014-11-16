@@ -23,15 +23,15 @@ func facts(c *cli.Context) {
 		log.Fatal("Please provide at least one fact.")
 	}
 
-	// Initialize helpers
+	// Initialize helpers.
 	factacular_init(c)
 
-	// 'Parse' input
+	// 'Parse' input.
 	facts := strings.Split(c.Args().First(), ",")
-	// Data
+
 	output := make(map[string][]singleFact)
 	// Get all facts for all nodes.
-	nodeChan := getSingleFact(facts)
+	nodeChan := getFactList(facts)
 	for {
 		select {
 		case s := <-nodeChan:
@@ -64,7 +64,7 @@ func printOutput(output map[string][]singleFact) {
 	}
 }
 
-func getSingleFact(factName []string) <-chan []puppetdb.FactJson {
+func getFactList(factName []string) <-chan []puppetdb.FactJson {
 	c := make(chan []puppetdb.FactJson)
 	for _, value := range factName {
 		go func(value string) {
