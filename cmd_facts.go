@@ -34,6 +34,17 @@ func facts(c *cli.Context) {
 			factChan <- checkFactAvailability(fact)
 		}(fact)
 	}
+L:
+	for {
+		select {
+		case e := <-factChan:
+			if e != nil {
+				log.Fatal(e)
+			}
+		case <-time.After(5 * time.Millisecond):
+			break L
+		}
+	}
 
 	output := make(map[string][]singleFact)
 	// Get all facts for all nodes.
@@ -42,10 +53,6 @@ func facts(c *cli.Context) {
 		select {
 		case s := <-nodeChan:
 			addToOutput(output, s)
-		case e := <-factChan:
-			if e != nil {
-				log.Fatal(e)
-			}
 		case <-time.After(1 * time.Second):
 			if debug {
 				fmt.Println("Timeout!")
