@@ -34,6 +34,35 @@ func startPdbClient(nodeName string) {
 	checkPuppetAvailability()
 }
 
+func checkFactsAvailability(facts []string) (err error) {
+	factChan := make(chan error)
+	refCountChan := make(chan int)
+	refCount := 0
+	for _, fact := range facts {
+		go func(fact string) {
+			factChan <- checkFactAvailability(fact)
+			refCountChan <- 1
+		}(fact)
+	}
+
+L:
+	for {
+		select {
+		case e := <-factChan:
+			if e != nil {
+				return e
+			}
+		case r := <-refCountChan:
+			refCount += r
+			if refCount == len(facts) {
+				break L
+			}
+		}
+	}
+	return
+
+}
+
 func checkFactAvailability(factName string) (err error) {
 	facts, err := pdb_client.FactNames()
 	for _, fact := range facts {
