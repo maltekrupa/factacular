@@ -10,7 +10,7 @@ import (
 )
 
 func listFacts(c *cli.Context) {
-	// Initialize helpers
+	// Initialize helpers.
 	factacular_init(c)
 
 	resp, err := pdb_client.FactNames()

@@ -21,7 +21,7 @@ func fact(c *cli.Context) {
 		return
 	}
 
-	// Initialize helpers
+	// Initialize helpers.
 	factacular_init(c)
 
 	// Check if fact is a valid fact.
