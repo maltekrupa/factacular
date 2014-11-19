@@ -34,14 +34,41 @@ func (slice FactsContainerList) positionOf(nodeName string) int {
 	return -1
 }
 
+func (slice FactsContainerList) factAvailableForAllNodes(factName string) bool {
+	cnt := 0
+E:
+	for entry := range slice {
+		for fact := range slice[entry].facts {
+			if slice[entry].facts[fact].key == factName {
+				cnt += 1
+				continue E
+			}
+		}
+	}
+	if cnt == len(slice) {
+		return true
+	}
+	return false
+}
+
 func (slice FactsContainerList) addFactToNode(factList []puppetdb.FactJson) {
-	loc := 0
+	loc := -1
 	for _, v := range factList {
 		loc = slice.positionOf(v.CertName)
 		if loc < 0 {
 			log.Fatal("Weired situation. Got a fact for a node that doesn't exist. Check you PuppetDB!")
 		}
 		slice[loc].facts = append(slice[loc].facts, singleFact{v.Name, v.Value})
+	}
+}
+
+func (slice FactsContainerList) print() {
+	for foo := range slice {
+		fmt.Printf("%s | ", slice[foo].node.Name)
+		for _, v := range slice[foo].facts {
+			fmt.Printf("%s | ", v.value)
+		}
+		fmt.Printf("\n")
 	}
 }
 
@@ -82,21 +109,14 @@ func facts(c *cli.Context) {
 			if debug {
 				fmt.Println("Timeout! Printing output.")
 			}
-			printOutput(output)
+			for _, v := range facts {
+				println(output.factAvailableForAllNodes(v))
+			}
+			//output.print()
 			return
 		}
 	}
 
-}
-
-func printOutput(output FactsContainerList) {
-	for foo := range output {
-		fmt.Printf("%s | ", output[foo].node.Name)
-		for _, v := range output[foo].facts {
-			fmt.Printf("%s | ", v.value)
-		}
-		fmt.Printf("\n")
-	}
 }
 
 func getFactList(factName []string) <-chan []puppetdb.FactJson {
