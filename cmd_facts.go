@@ -51,6 +51,18 @@ E:
 	return false
 }
 
+func (slice FactsContainerList) inflateFact(factName string) {
+E:
+	for entry := range slice {
+		for fact := range slice[entry].facts {
+			if slice[entry].facts[fact].key == factName {
+				continue E
+			}
+		}
+		slice[entry].facts = append(slice[entry].facts, singleFact{factName, "N/A"})
+	}
+}
+
 func (slice FactsContainerList) addFactToNode(factList []puppetdb.FactJson) {
 	loc := -1
 	for _, v := range factList {
@@ -105,14 +117,17 @@ func facts(c *cli.Context) {
 		select {
 		case s := <-nodeChan:
 			output.addFactToNode(s)
+		// Please change this to something else ...
 		case <-time.After(500 * time.Millisecond):
 			if debug {
 				fmt.Println("Timeout! Printing output.")
 			}
-			for _, v := range facts {
-				println(output.factAvailableForAllNodes(v))
+			if c.Bool("inflate-facts") {
+				for _, v := range facts {
+					output.inflateFact(v)
+				}
 			}
-			//output.print()
+			output.print()
 			return
 		}
 	}
