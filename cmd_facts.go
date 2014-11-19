@@ -14,8 +14,35 @@ import (
 )
 
 type singleFact struct {
-	name  string
+	key   string
 	value string
+}
+
+type FactsContainer struct {
+	node  puppetdb.NodeJson
+	facts []singleFact
+}
+
+type FactsContainerList []FactsContainer
+
+func (slice FactsContainerList) positionOf(nodeName string) int {
+	for k, v := range slice {
+		if v.node.Name == nodeName {
+			return k
+		}
+	}
+	return -1
+}
+
+func (slice FactsContainerList) addFactToNode(factList []puppetdb.FactJson) {
+	loc := 0
+	for _, v := range factList {
+		loc = slice.positionOf(v.CertName)
+		if loc < 0 {
+			log.Fatal("Weired situation. Got a fact for a node that doesn't exist. Check you PuppetDB!")
+		}
+		slice[loc].facts = append(slice[loc].facts, singleFact{v.Name, v.Value})
+	}
 }
 
 func facts(c *cli.Context) {
@@ -33,14 +60,25 @@ func facts(c *cli.Context) {
 		log.Fatal(err)
 	}
 
-	output := make(map[string][]singleFact)
+	// Get a list of all nodes.
+	nodes, err := pdb_client.Nodes()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Make some space for the output.
+	output := make(FactsContainerList, len(nodes))
+	// Put all nodes into the output.
+	for k, v := range nodes {
+		output[k].node = v
+	}
+
 	// Get all facts for all nodes.
 	nodeChan := getFactList(facts)
 	for {
 		select {
 		case s := <-nodeChan:
-			addToOutput(output, s)
-		case <-time.After(1 * time.Second):
+			output.addFactToNode(s)
+		case <-time.After(500 * time.Millisecond):
 			if debug {
 				fmt.Println("Timeout! Printing output.")
 			}
@@ -51,16 +89,10 @@ func facts(c *cli.Context) {
 
 }
 
-func addToOutput(result map[string][]singleFact, factList []puppetdb.FactJson) {
-	for _, value := range factList {
-		result[value.CertName] = append(result[value.CertName], singleFact{value.Name, value.Value})
-	}
-}
-
-func printOutput(output map[string][]singleFact) {
-	for key, val := range output {
-		fmt.Printf("%s | ", key)
-		for _, v := range val {
+func printOutput(output FactsContainerList) {
+	for foo := range output {
+		fmt.Printf("%s | ", output[foo].node.Name)
+		for _, v := range output[foo].facts {
 			fmt.Printf("%s | ", v.value)
 		}
 		fmt.Printf("\n")
