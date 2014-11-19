@@ -79,7 +79,7 @@ func checkPuppetAvailability() {
 		os.Exit(1)
 	}
 	if debug {
-		fmt.Printf("Using PuppetDB (%s) at: %s", pdb_version, pdb_client.BaseURL)
+		fmt.Printf("Using PuppetDB (%s) at: %s\n", pdb_version, pdb_client.BaseURL)
 	}
 }
 

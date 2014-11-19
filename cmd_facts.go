@@ -42,7 +42,7 @@ func facts(c *cli.Context) {
 			addToOutput(output, s)
 		case <-time.After(1 * time.Second):
 			if debug {
-				fmt.Println("Timeout!")
+				fmt.Println("Timeout! Printing output.")
 			}
 			printOutput(output)
 			return
