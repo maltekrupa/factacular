@@ -11,9 +11,9 @@ import (
 
 func listFacts(c *cli.Context) {
 	// Initialize helpers.
-	factacular_init(c)
+	factacularInit(c)
 
-	resp, err := pdb_client.FactNames()
+	resp, err := pdbClient.FactNames()
 	if err != nil {
 		fmt.Println(err)
 	}

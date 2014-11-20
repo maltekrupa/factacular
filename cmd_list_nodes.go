@@ -11,9 +11,9 @@ import (
 
 func listNodes(c *cli.Context) {
 	// Initialize helpers.
-	factacular_init(c)
+	factacularInit(c)
 
-	resp, err := pdb_client.Nodes()
+	resp, err := pdbClient.Nodes()
 	if err != nil {
 		fmt.Println(err)
 	}

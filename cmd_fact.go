@@ -22,7 +22,7 @@ func fact(c *cli.Context) {
 	}
 
 	// Initialize helpers.
-	factacular_init(c)
+	factacularInit(c)
 
 	// Check if fact is a valid fact.
 	err := checkFactAvailability(c.Args().First())
@@ -30,7 +30,7 @@ func fact(c *cli.Context) {
 		log.Fatal(err)
 	}
 
-	resp, err = pdb_client.FactPerNode(c.Args().First())
+	resp, err = pdbClient.FactPerNode(c.Args().First())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -42,7 +42,7 @@ func fact(c *cli.Context) {
 		printWithoutData()
 	case c.Bool("nofact"):
 		// Get a list of all nodes.
-		allNodes, _ := pdb_client.Nodes()
+		allNodes, _ := pdbClient.Nodes()
 		printNoFact(c.Args().First(), allNodes)
 	default:
 		for _, element := range resp {

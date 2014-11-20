@@ -86,6 +86,10 @@ func main() {
 					Name:  "nodes",
 					Usage: "Show facts only for the provided nodes.",
 				},
+				cli.BoolFlag{
+					Name:  "inflate-facts",
+					Usage: "Inflate empty facts fields on all nodes.",
+				},
 			},
 		},
 	}
