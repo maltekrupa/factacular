@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	pdb_client *puppetdb.Client
-	debug      bool
+	pdbClient *puppetdb.Client
+	debug     bool
 )
 
-func factacular_init(c *cli.Context) {
+func factacularInit(c *cli.Context) {
 	// Set debug level.
 	setDebug(c.GlobalBool("debug"))
 	// Start PuppetDB connector.
@@ -30,7 +30,7 @@ func setDebug(state bool) {
 }
 
 func startPdbClient(nodeName string) {
-	pdb_client = puppetdb.NewClient(nodeName)
+	pdbClient = puppetdb.NewClient(nodeName)
 	checkPuppetAvailability()
 }
 
@@ -64,7 +64,7 @@ L:
 }
 
 func checkFactAvailability(factName string) (err error) {
-	facts, err := pdb_client.FactNames()
+	facts, err := pdbClient.FactNames()
 	for _, fact := range facts {
 		if fact == factName {
 			return
@@ -74,12 +74,12 @@ func checkFactAvailability(factName string) (err error) {
 }
 
 func checkPuppetAvailability() {
-	pdb_version, err := pdb_client.PuppetdbVersion()
+	pdbVersion, err := pdbClient.PuppetdbVersion()
 	if err != nil {
 		os.Exit(1)
 	}
 	if debug {
-		fmt.Printf("Using PuppetDB (%s) at: %s\n", pdb_version, pdb_client.BaseURL)
+		fmt.Printf("Using PuppetDB (%s) at: %s\n", pdbVersion, pdbClient.BaseURL)
 	}
 }
 
