@@ -1,16 +1,6 @@
 /*
-This CLI implements some handy features to query facts from PuppetDB
-very conveniently.
-
-Examples:
-- Get the fact "os" from all nodes.
-`factacular fact os`
-
-- Get a list of all facts.
-`factacular list-facts`
-
-- Get all facts from a specific host.
-`factacular node-facts fqdn.example.com`
+	This CLI implements some handy features to query facts from PuppetDB
+	very conveniently.
 */
 
 package main
