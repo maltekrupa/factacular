@@ -18,14 +18,14 @@ type singleFact struct {
 	value string
 }
 
-type FactsContainer struct {
+type factsContainer struct {
 	node  puppetdb.NodeJson
 	facts []singleFact
 }
 
-type FactsContainerList []FactsContainer
+type factsContainerList []factsContainer
 
-func (slice FactsContainerList) positionOf(nodeName string) int {
+func (slice factsContainerList) positionOf(nodeName string) int {
 	for k, v := range slice {
 		if v.node.Name == nodeName {
 			return k
@@ -34,13 +34,13 @@ func (slice FactsContainerList) positionOf(nodeName string) int {
 	return -1
 }
 
-func (slice FactsContainerList) factAvailableForAllNodes(factName string) bool {
+func (slice factsContainerList) factAvailableForAllNodes(factName string) bool {
 	cnt := 0
 E:
 	for entry := range slice {
 		for fact := range slice[entry].facts {
 			if slice[entry].facts[fact].key == factName {
-				cnt += 1
+				cnt++
 				continue E
 			}
 		}
@@ -51,7 +51,7 @@ E:
 	return false
 }
 
-func (slice FactsContainerList) inflateFact(factName string) {
+func (slice factsContainerList) inflateFact(factName string) {
 E:
 	for entry := range slice {
 		for fact := range slice[entry].facts {
@@ -63,7 +63,7 @@ E:
 	}
 }
 
-func (slice FactsContainerList) addFactToNode(factList []puppetdb.FactJson) {
+func (slice factsContainerList) addFactToNode(factList []puppetdb.FactJson) {
 	loc := -1
 	for _, v := range factList {
 		loc = slice.positionOf(v.CertName)
@@ -74,7 +74,7 @@ func (slice FactsContainerList) addFactToNode(factList []puppetdb.FactJson) {
 	}
 }
 
-func (slice FactsContainerList) print() {
+func (slice factsContainerList) print() {
 	for foo := range slice {
 		fmt.Printf("%s | ", slice[foo].node.Name)
 		for _, v := range slice[foo].facts {
@@ -90,7 +90,7 @@ func facts(c *cli.Context) {
 	}
 
 	// Initialize helpers.
-	factacular_init(c)
+	factacularInit(c)
 
 	// 'Parse' input and check availability.
 	facts := strings.Split(c.Args().First(), ",")
@@ -100,12 +100,12 @@ func facts(c *cli.Context) {
 	}
 
 	// Get a list of all nodes.
-	nodes, err := pdb_client.Nodes()
+	nodes, err := pdbClient.Nodes()
 	if err != nil {
 		log.Fatal(err)
 	}
 	// Make some space for the output.
-	output := make(FactsContainerList, len(nodes))
+	output := make(factsContainerList, len(nodes))
 	// Put all nodes into the output.
 	for k, v := range nodes {
 		output[k].node = v
@@ -138,7 +138,7 @@ func getFactList(factName []string) <-chan []puppetdb.FactJson {
 	c := make(chan []puppetdb.FactJson)
 	for _, value := range factName {
 		go func(value string) {
-			allFacts, err := pdb_client.FactPerNode(value)
+			allFacts, err := pdbClient.FactPerNode(value)
 			if err != nil {
 				log.Fatal(err)
 			}

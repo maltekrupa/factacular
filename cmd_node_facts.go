@@ -16,9 +16,9 @@ func nodeFacts(c *cli.Context) {
 	}
 
 	// Initialize helpers.
-	factacular_init(c)
+	factacularInit(c)
 
-	resp, err := pdb_client.NodeFacts(c.Args().First())
+	resp, err := pdbClient.NodeFacts(c.Args().First())
 	if err != nil {
 		fmt.Println(err)
 	}
