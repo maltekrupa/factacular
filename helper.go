@@ -83,7 +83,9 @@ func checkPuppetAvailability() {
 	}
 }
 
-// ValSorter is a helper struct to make the sort of PuppetDB data more easy.
+/*
+ValSorter is a helper to sort structs based on their values.
+*/
 type ValSorter struct {
 	Keys []string
 	Vals []int

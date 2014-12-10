@@ -9,6 +9,7 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/temal-/go-puppetdb"
 	"log"
+	"sort"
 	"strings"
 	"time"
 )
@@ -18,9 +19,28 @@ type singleFact struct {
 	value string
 }
 
+type multipleFacts []singleFact
+
+/*
+multipleFacts is a slice of facts for every node that must be sorted.
+TODO: Sort it according to the provided facts. Currently we sort based on the alphabet.
+*/
+func (mF multipleFacts) Len() int {
+	return len(mF)
+}
+
+func (mF multipleFacts) Less(i, j int) bool {
+	return mF[i].key < mF[j].key
+}
+
+func (mF multipleFacts) Swap(i, j int) {
+	mF[i].key, mF[j].key = mF[j].key, mF[i].key
+	mF[i].value, mF[j].value = mF[j].value, mF[i].value
+}
+
 type factsContainer struct {
 	node  puppetdb.NodeJson
-	facts []singleFact
+	facts multipleFacts
 }
 
 type factsContainerList []factsContainer
@@ -77,6 +97,7 @@ func (slice factsContainerList) addFactToNode(factList []puppetdb.FactJson) {
 func (slice factsContainerList) print() {
 	for foo := range slice {
 		fmt.Printf("%s | ", slice[foo].node.Name)
+		sort.Sort(slice[foo].facts)
 		for _, v := range slice[foo].facts {
 			fmt.Printf("%s | ", v.value)
 		}
