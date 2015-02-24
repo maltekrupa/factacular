@@ -1,6 +1,6 @@
 # factacular
 
-Factacular is a Command Line Interface (CLI) for convinient querying of the PuppetDB.
+Factacular is a Command Line Interface (CLI) for convenient querying of the PuppetDB.
 
 ## Repository status
 
